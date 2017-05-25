@@ -1,0 +1,29 @@
+Troubleshooting TFA:
+2024863.1: Trace File Analyzer Collector (TFA) Known Issues and Troubleshooting
+
+References
+215187.1: All About the SQLT Diagnostic Tool
+301137.1: OSWatcher
+314422.1: Remote Diagnostic Agent (RDA) - Getting Started
+438452.1: Performance Tools Quick Reference Guide
+459694.1: Procwatcher: Script to Monitor and Examine Oracle DB and Clusterware Processes
+461053.1: OSWatcher Analyzer User Guide
+1070954.1: Oracle Exadata Database Machine exachk or HealthCheck
+1268927.1: ORAchk Health Checks For The Oracle Stack
+1366133.1: SQL Tuning Health-Check Script (SQLHC)
+1454160.1: FAQ: SQLT (SQLTXPLAIN) Frequently Asked Questions
+1465741.1: How to Use SQLT (SQLTXPLAIN) to Create a Testcase Containing Application Data
+1470811.1: How to Use SQLT (SQLTXPLAIN) to Create a Testcase Without Row Data
+1477599.1: Best Practices Around Data Collection For Performance Issues
+1482811.1: Best Practices: Proactively Avoiding Database and Query Performance Issues
+1500864.1: oratop - Utility for Near Real-time Monitoring of Databases, RAC and Single Instance
+1513912.2: TFA Collector - Tool for Enhanced Diagnostic Gathering
+1594347.1: RAC and DB Support Tools Bundle
+1614107.1: SQLT Usage Instructions
+1627387.1: How to Determine the SQL_ID for a SQL Statement
+1908282.1: ODA TFA: How to set up and run TFA on the Oracle Database Appliance for 2.10 and lower
+1922234.1: SQLT Main Report: Usage Suggestions
+2024863.1: Trace File Analyzer Collector (TFA) Known Issues and Troubleshooting
+2054786.1: TFA tools(not collector) do not get installed along with TFA during 12.1.0.2 GI installation
+2156456.1: SRDC - How to Collect Standard Information for a Database Performance Problem for 11g or Greater on Unix/Linux (with Diagnostic Pack License)
+2160658.1: Auto Collection of Database Performance Diagnostics Using TFA: Walk-through and Details

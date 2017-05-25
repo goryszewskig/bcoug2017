@@ -1,0 +1,135 @@
+Extended tools included with TFALite:
+    summary
+    history
+    ls
+    grep
+    tail
+    ps
+    vi
+
+===============================================================================
+summary: Displays a system summary
+
+    tfactl> summary
+
+    Output from host : rac1
+    ------------------------------
+
+    =====
+    Nodes
+    =====
+    rac1
+    rac2
+
+    =====
+    Homes
+    =====
+
+    .-----------------------------------------------------------------------------------------.
+    | Home                                | Type | Version    | Database | Instance | Patches |
+    +-------------------------------------+------+------------+----------+----------+---------+
+    | /u01/app/12.1.0/grid                | GI   | 12.1.0.2.0 |          |          |         |
+    | /u01/app/oracle/product/12.1.0/db_1 | DB   | 12.1.0.2.0 | cdbrac   | cdbrac1  |         |
+    '-------------------------------------+------+------------+----------+----------+---------'
+
+    Output from host : rac2
+    ------------------------------
+
+    =====
+    Homes
+    =====
+
+    .-----------------------------------------------------------------------------------------.
+    | Home                                | Type | Version    | Database | Instance | Patches |
+    +-------------------------------------+------+------------+----------+----------+---------+
+    | /u01/app/12.1.0/grid                | GI   | 12.1.0.2.0 |          |          |         |
+    | /u01/app/oracle/product/12.1.0/db_1 | DB   | 12.1.0.2.0 | cdbrac   | cdbrac2  |         |
+    '-------------------------------------+------+------------+----------+----------+---------'
+
+===============================================================================
+history: Show the recent command line history (only useful in the CLI)
+
+===============================================================================
+alertsummary: Display a summary listing of notable alert log events.
+
+    alertsummary
+    alertsummary -db <dbname>
+
+Example:
+
+    tfactl> alertsummary -db cdbrac1
+
+    Output from host : rac1
+    ------------------------------
+
+    Reading /u01/app/oracle/diag/rdbms/cdbrac/cdbrac1/trace/alert_cdbrac1.log 
+    +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-
+
+    ------------------------------------------------------------------------
+    Oct 19 21:26:29 Database started               
+
+    Summary: Ora-600=0, Ora-7445=0, Ora-700=4
+    ~~~~~~~
+    Warning: Only FATAL errors reported
+    Warning: These errors were seen and NOT reported
+     Ora-00313 Ora-19698 Ora-15064 Ora-03113 Ora-15077 Ora-00942 Ora-01918
+
+===============================================================================
+ls: Search for files in the all Oracle directories (those shown in print directories). Run as:
+
+    ls <filename>
+    -or-
+    ls <search_string>
+
+Examples:
+
+    # Find all files like "alert"
+    ls alert
+
+Beware, don't run something like:
+
+    ls .trc
+
+It will show you every .trc file on your system. There are no limiters on the ls command (eg, only one database, component, node). It returns everything, and it reaches back in its repository so it will show logs it knows about if they've been deleted between metadata collections.
+
+===============================================================================
+grep: Find string patterns in files within Oracle directories. Run with:
+
+    grep ORA-00600 alert_
+    grep -i "starting oracle instance" alert_
+
+Be weary of searching .trc files as noted under the ls command.
+
+All grep flags are supported.
+
+Like ls, there is no functionality to limit the files that will be searched by node, database, component, etc.
+
+===============================================================================
+tail: Show the last 10 lines of matching files.
+
+    tail alert_*
+    tail -f alert_*
+
+The -f option follows the logs as they're updated. 
+
+When multiple files are displayed, tail -f will update the output to show new lines in all files. This is useful for showing new entries in ASM and database alert logs.
+
+===============================================================================
+ps: Show all processes matching the string across all nodes. All ps flags are supported.
+
+    tfactl> ps pmon
+
+    Output from host : rac1
+    ------------------------------
+    oracle    9205     1  0 Oct21 ?        00:00:13 asm_pmon_+ASM1
+    oracle    9376     1  0 Oct21 ?        00:00:14 ora_pmon_cdbrac1
+
+    Output from host : rac2
+    ------------------------------
+    oracle    3465     1  0 Oct19 ?        00:00:20 asm_pmon_+ASM2
+    oracle   30206     1  0 Oct20 ?        00:00:23 ora_pmon_cdbrac2
+
+===============================================================================
+vi: Open the vi editor for all matching files.
+
+    tfactl> vi alert_SID.ora

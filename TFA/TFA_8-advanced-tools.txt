@@ -1,0 +1,172 @@
+Advanced tools included with TFALite:
+    exachk
+    orachk
+    procwatcher
+    oratop
+    oswbb
+    sqlt
+    darda
+
+===============================================================================
+exachk/orachk: Run the oracheck/exachk programs, built into TFA.
+
+===============================================================================
+procwatcher: Script for monitoring and capturing diagnostics of severe database performance issues, hangs and deadlocking.
+
+Before starting procwatcher, edit the init file: $ORACLE_BASE/tfa/repository/suptools/prw/root/prwinit.ora
+
+Several parameters are available to be customized, including:
+
+    EXAMINE_CLUSTER: Examine clusterware processes
+    RETENTION: Number of days to retain PRW data
+    WARNINGEMAIL: Email address(es) to send warning emails
+    INTERVAL: In seconds, between checks
+    THROTTLE: Max simultaneous trace sessions
+    IDLECPU: Percentage of idle cpu remaining before PRW sleeps
+    SIDLIST: List of SIDs to examine
+
+Also, up to three custom SQL scripts can be executed with each PRW iteration.
+
+In a non-RAC environment, start prw:
+
+    tfactl> prw start
+
+In a RAC environment, deploy PRW:
+
+    tfactl> prw deploy
+    Registering clusterware resource
+    SETTING UP NODE rac1
+    SETTING UP NODE rac2
+    Copying Procwatcher to Node rac2
+    prw.sh                                      100%  196KB     196.3KB/s   00:00
+    prwinit.ora                                     100% 6220     6.1KB/s   00:00
+    CRS-2672: Attempting to start 'procwatcher' on 'rac2'
+    CRS-2672: Attempting to start 'procwatcher' on 'rac1'
+    CRS-2676: Start of 'procwatcher' on 'rac2' succeeded
+    CRS-2676: Start of 'procwatcher' on 'rac1' succeeded
+ 
+    PROCWATCHER DEPLOYED
+ 
+    Checking Procwatcher Status:
+ 
+    Tue Oct 25 01:56:06 MDT 2016: PROCWATCHER VERSION: 12.2.15.2.3
+    Tue Oct 25 01:56:06 MDT 2016: ### Parameters ###
+    Tue Oct 25 01:56:06 MDT 2016: Procwatcher Directory (PRWDIR): /u01/app/oracle/tfa/repository/suptools/prw/root
+    Tue Oct 25 01:56:06 MDT 2016: EXAMINE_CLUSTER=false
+    Tue Oct 25 01:56:06 MDT 2016: EXAMINE_BG=true
+    Tue Oct 25 01:56:06 MDT 2016: PRWPERM=740
+    Tue Oct 25 01:56:06 MDT 2016: RETENTION=7
+    Tue Oct 25 01:56:06 MDT 2016: WARNINGEMAIL=
+    Tue Oct 25 01:56:06 MDT 2016: INTERVAL=60
+    Tue Oct 25 01:56:06 MDT 2016: THROTTLE=5
+    Tue Oct 25 01:56:06 MDT 2016: IDLECPU=3
+    Tue Oct 25 01:56:06 MDT 2016: SIDLIST=
+    Tue Oct 25 01:56:06 MDT 2016: ### Advanced Parameters (non-default) ###
+    Tue Oct 25 01:56:06 MDT 2016: ### End Parameters ###
+ 
+    Tue Oct 25 01:56:06 MDT 2016: Procwatcher is currently running on local node rac1
+    Tue Oct 25 01:56:06 MDT 2016: Procwatcher files are be written to: /u01/app/oracle/tfa/repository/suptools/prw/root
+ 
+    Tue Oct 25 01:56:06 MDT 2016: There are 0 concurrent debug sessions running...
+ 
+    Tue Oct 25 01:56:06 MDT 2016: PROCWATCHER CLUSTERWARE STATUS:
+ 
+    NAME=procwatcher
+    TYPE=application
+    TARGET=ONLINE        , ONLINE
+    STATE=ONLINE on rac2, ONLINE on rac1
+
+PRW is now registered with CRS and managed as an application under the clusterware.
+
+    Resource Name                            Resource Type             Target     State        Node            FC RC State Details
+    ---------------------------------------- ------------------------- ---------- ------------ --------------- -- -- ---------------
+    procwatcher                              application               ONLINE     ONLINE       rac2           
+
+If an email address is specified, PRW will now notify recipients of severe contention issues.
+
+Example output:
+
+    ----------blkr----------
+    Mon Nov 9 09:57:58 MST 2015: Suspected final blocker is:
+    -------end blkr---------
+    rac1 Waitchains SessionCount:6-Instance:2
+
+    V WAITCHAINS (top 100 rows) Snapshot Taken At: Mon Nov 9 09:57:49 MST 2015
+    PROC 40294 : Current Process: 40294    SID: 244 SER#: 43229     INST rac1         INST #: 1
+    PROC 40294 : User: APP                                          Machine: abc025
+    PROC 40294 :
+    PROC 40294 : Blocking Process: 3080 from Instance 2             Number of waiters: 0
+    PROC 40294 : User: APP                                          Machine: abc025
+    PROC 40294 : Final Blocking Process: 3080 from Instance 2       Program: oracle@node02
+    PROC 40294 : Wait Event: enq: TX - row lock contention          P1: 1415053318   P2: 393235       P3: 12309582
+    PROC 40294 : Seconds in Wait: 38                                Seconds Since Last Wait:
+    PROC 40294 : Wait Chain: 1: 'SQL*Net message from client'<='enq: TX - row lock contention'
+    PROC 40294 : Blocking Wait Chain: <none>
+    ------------------------------
+    PROC 2690 :  Current Process: 2690     SID: 321 SER#: 11901     INST rac1         INST #: 1
+    PROC 2690 :  User: APP                                          Machine: abc025
+    PROC 2690 :
+    PROC 2690 :  Blocking Process: 3080 from Instance 2             Number of waiters: 0
+    PROC 2690 :  User: APP                                          Machine: abc025
+    PROC 2690 :  Final Blocking Process: 3080 from Instance 2       Program: oracle@node02
+    PROC 2690 :  Wait Event: enq: TX - row lock contention          P1: 1415053318   P2: 393235       P3: 12309582
+    PROC 2690 :  Seconds in Wait: 40                                Seconds Since Last Wait:
+    PROC 2690 :  Wait Chain: 2: 'SQL*Net message from client'<='enq: TX - row lock contention'
+    PROC 2690 :  Blocking Wait Chain: 1
+    ------------------------------
+
+    ----------blkr----------
+    -------end blkr---------
+
+    V LATCHHOLDER Snapshot Taken At: Mon Nov 9 09:57:55 MST 2015
+    PROC                 INST            LADDR            NAME                                           GETS
+    -------------------- --------------- ---------------- ---------------------------------------- ----------
+    PROC 18939           INST rac1       000000006002D9F8 transaction allocation                   3822219350
+    PROC 18939           INST rac1       0000001E56F743B0 transaction allocation                   3822219350
+    PROC 18939           INST rac1       0000001E56F74450 transaction allocation                   3822219350
+
+===============================================================================
+oratop: Real time database performance monitoring tool.
+
+===============================================================================
+oswbb: Collects and archives OS metrics.
+
+===============================================================================
+sqlt: Assists in tuning poorly performing SQL statements.
+
+Though it may show as running, SQLT needs to be installed on a database before it can be used:
+
+    tfactl> sqlt install
+
+Then you'll be able to run SQLT.
+
+To get a list of SQL running on your host, run:
+
+    tfactl> sqlt getid
+
+SQLT has a variety of methods that may be invoked:
+
+   Main Methods
+   xtract [SQL_ID]|[HASH_VALUE] [sqltxplain_password]
+   xecute [path]scriptname [sqltxplain_password]
+   xtrxec [SQL_ID]|[HASH_VALUE] [sqltxplain_password]
+   xplain [path]filename [sqltxplain_password]
+   xtrsby [SQL_ID]|[HASH_VALUE] [sqltxplain_password] [DB_LINK]
+   xprext [SQL_ID]|[HASH_VALUE] [sqltxplain_password]
+   xprexc [path]scriptname [sqltxplain_password]
+
+   Special Methods
+
+   compare [STATEMENT_ID 1] [STATEMENT_ID 2]
+   trcanlzr [SQL Trace filename|control.txt]
+   trcaxtr [SQL Trace filename|control.txt]
+   trcasplit [SQL Trace filename]
+   xtrset
+
+Examples:
+
+    CDBRAC tfactl> sqlt install -database testdb1
+    CDBRAC tfactl> sqlt xtract 1234 password -database testdb1
+
+===============================================================================
+darda: Diagnostic Assistant tool provides an interface into the ADR, RDA, OCM diagnostic tools.

@@ -1,0 +1,29 @@
+tfactl> toolstatus
+.-----------------------------------.
+|       External Support Tools      |
++------+--------------+-------------+
+| Host | Tool         | Status      |
++------+--------------+-------------+
+| rac1 | alertsummary | DEPLOYED    |
+| rac1 | exachk       | DEPLOYED    |
+| rac1 | ls           | DEPLOYED    |
+| rac1 | pstack       | DEPLOYED    |
+| rac1 | orachk       | DEPLOYED    |
+| rac1 | sqlt         | DEPLOYED    |
+| rac1 | grep         | DEPLOYED    |
+| rac1 | summary      | DEPLOYED    |
+| rac1 | prw          | NOT RUNNING |
+| rac1 | vi           | DEPLOYED    |
+| rac1 | tail         | DEPLOYED    |
+| rac1 | param        | DEPLOYED    |
+| rac1 | dbglevel     | DEPLOYED    |
+| rac1 | darda        | DEPLOYED    |
+| rac1 | history      | DEPLOYED    |
+| rac1 | oratop       | DEPLOYED    |
+| rac1 | oswbb        | RUNNING     |
+| rac1 | dbperf       | DEPLOYED    |
+| rac1 | changes      | DEPLOYED    |
+| rac1 | events       | DEPLOYED    |
+| rac1 | ps           | DEPLOYED    |
+| rac1 | srdc         | DEPLOYED    |
+'------+--------------+-------------'

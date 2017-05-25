@@ -1,0 +1,55 @@
+#!/bin/bash
+echo "Example of running TFA from a shell script"
+echo " "
+
+/u01/app/12.1.0/grid/bin/tfactl <<EOF
+status
+print config
+exit
+EOF
+
+diagstat=`/u01/app/12.1.0/grid/bin/tfactl print config | grep "Automatic diagnostic collection" | awk '{print $6}'`
+echo "Diagnostic collection is: " $diagstat
+exit 0
+
+
+
+# Example output:
+
+> ./tfa_demo.sh 
+Example of running TFA from a shell script
+ 
+
+.--------------------------------------------------------------------------------------------.
+| Host | Status of TFA | PID   | Port | Version    | Build ID             | Inventory Status |
++------+---------------+-------+------+------------+----------------------+------------------+
+| rac1 | RUNNING       | 18053 | 5000 | 12.1.2.8.3 | 12128320160930113240 | COMPLETE         |
+| rac2 | NOT RUNNING   | -     |      |            |                      |                  |
+'------+---------------+-------+------+------------+----------------------+------------------'
+.---------------------------------------------------------------.
+|                              rac1                             |
++--------------------------------------------------+------------+
+| Configuration Parameter                          | Value      |
++--------------------------------------------------+------------+
+| TFA Version                                      | 12.1.2.8.3 |
+| Java Version                                     | 1.6        |
+| Public IP Network                                | ON         |
+| Automatic diagnostic collection                  | ON         |
+| Alert Log Scan                                   | ON         |
+| Trimming of files during diagcollection          | ON         |
+| Repository current size (MB)                     | 417        |
+| Repository maximum size (MB)                     | 10240      |
+| Inventory Trace level                            | 1          |
+| Collection Trace level                           | 1          |
+| Scan Trace level                                 | 1          |
+| Other Trace level                                | 1          |
+| Max Size of TFA Log (MB)                         | 50         |
+| Max Number of TFA Logs                           | 10         |
+| Max Size of Core File (MB)                       | 20         |
+| Max Collection Size of Core Files (MB)           | 200        |
+| Automatic Purging                                | ON         |
+| Minimum Age of Collections to Purge (Hours)      | 12         |
+| Minimum Space Free to enable Alert Log Scan (MB) | 500        |
+'--------------------------------------------------+------------'
+
+Diagnostic collection is:  ON

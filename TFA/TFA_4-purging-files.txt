@@ -1,0 +1,40 @@
+Purging files
+
+    purge -older 1d
+    purge -older 12h
+
+There is a force option, otherwise TFA will provide you with a list of repos it will delete and a Y/N option. Be aware that the default is Yes.
+
+Purge must be done as root, else you get permission errors (the repository subdir is default owned by root):
+
+Purging as oracle:
+
+    tfactl> purge -older 1d
+
+    List of files in the repository older than 1d:
+    /u01/app/oracle/tfa/repository/collection_Fri_Oct_21_16_13_17_MDT_2016_node_all
+    /u01/app/oracle/tfa/repository/collection_Fri_Oct_21_16_20_09_MDT_2016_node_all
+
+    Do you want to delete the above files. [Y|y|N|n] [Y]: Y
+
+    Deleting /u01/app/oracle/tfa/repository/collection_Fri_Oct_21_16_13_17_MDT_2016_node_allcannot remove directory for     
+    /u01/app/oracle/tfa/repository/collection_Fri_Oct_21_16_13_17_MDT_2016_node_all: Permission denied at     
+    /u01/app/12.1.0/grid/tfa/rac1/tfa_home/bin/modules/tfactldiagcollect.pm line 4304
+    .....Deleted.
+    Deleting /u01/app/oracle/tfa/repository/collection_Fri_Oct_21_16_20_09_MDT_2016_node_allcannot remove directory for 
+    /u01/app/oracle/tfa/repository/collection_Fri_Oct_21_16_20_09_MDT_2016_node_all: Permission denied at 
+    /u01/app/12.1.0/grid/tfa/rac1/tfa_home/bin/modules/tfactldiagcollect.pm line 4304
+    .....Deleted.
+
+As root:
+
+    tfactl> purge -older 1d
+
+    List of files in the repository older than 1d:
+    /u01/app/oracle/tfa/repository/collection_Fri_Oct_21_16_13_17_MDT_2016_node_all
+    /u01/app/oracle/tfa/repository/collection_Fri_Oct_21_16_20_09_MDT_2016_node_all
+
+    Do you want to delete the above files. [Y|y|N|n] [Y]: Y
+
+    Deleting /u01/app/oracle/tfa/repository/collection_Fri_Oct_21_16_13_17_MDT_2016_node_all .....Deleted.
+    Deleting /u01/app/oracle/tfa/repository/collection_Fri_Oct_21_16_20_09_MDT_2016_node_all .....Deleted.

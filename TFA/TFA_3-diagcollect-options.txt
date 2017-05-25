@@ -1,0 +1,148 @@
+TFA has options that are useful in limiting the files collected when a narrow cause has been identified:
+
+      -all        Collect all logs (If no time is given for collection then files for the last 4 hours will be collected)
+      -asm        Collect ASM logs
+      -dbwlm      Collect DBWLM logs
+      -tns        Collect TNS logs
+      -crs        Collect CRS logs
+      -wls        Collect WLS logs
+      -emagent    Collect EMAGENT logs
+      -oms        Collect OMS logs
+      -ocm        Collect OCM logs
+      -emplugins  Collect EMPLUGINS logs
+      -em         Collect EM logs
+      -acfs       Collect ACFS logs
+      -install    Collect Oracle Installation related files
+      -cfgtools   Collect CFGTOOLS logs
+      -os         Collect OS files such as /var/log/messages
+      -ashhtml    Collect Generate ASH HTML Report
+      -ashtext    Collect Generate ASH TEXT Report
+      -awrhtml    Collect AWRHTML logs
+      -awrtext    Collect AWRTEXT logs
+      -database   Collect database logs from databases specified
+      -chmos      Collect CHMOS files (Note that this data can be large for longer durations) 
+
+If you want to see what is collected as part of any component, run:
+
+    tfactl print components crs
+
+    .----------------------------.
+    |       XML Components       |
+    +---------------+------------+
+    | Field         | Value      |
+    +---------------+------------+
+    | Name          | CRS        |
+    | Description   | CRS logs   |
+    | Comp. Types   | collection |
+    | Configuration | all        |
+    | Also collect  | TNS        |
+    |               | OS         |
+    |               | RACDBCLOUD |
+    '---------------+------------'
+
+This tells us that the CRS component will capture the CRS logs, along with TNS, OS and RACDBCLOUD logs.
+
+To see what's collected for all components, run:
+
+    tnsctl> print components
+
+Further refinements are available:
+
+      -nocores        Do not collect Core files when it would normally have been collected 
+      -collectalldirs Collect all files from a directory marked "Collect All" flag to true
+      -node           Specify comma separated list of host names for collection 
+
+Manage the behavior of TFA collection:
+
+      -nocopy         Does not copy back the zip files to initiating node from all nodes
+      -notrim         Does not trim the files collected
+      -silent         This option is used to submit the diagcollection as a background process
+      -tag <tagname>  The files will be collected into tagname directory inside repository 
+      -z <zipname>    The files will be collected into tagname directory with the specified zipname
+
+===============================================================================
+Collecting ASH/AWR reports through TFA
+
+    diagcollect –awrhtml
+    diagcollect –awrtext
+    diagcollect –ashhtml
+    diagcollect –ashtext
+
+Reports can be requested together in the same collection:
+
+    diagcollect –awrtext –ashtext –database cdbrac -from "OCT/01/2016 00:00:00" -to "OCT/01/2016 02:00:00"
+
+===============================================================================
+Collecting diagnostics for a specific issue (interactively)
+
+    diagcollect -srdc <type>
+
+Where the type is in:
+
+    dbperf
+    internalerror
+    ora600
+    ora700
+    ora4030
+    ora4031
+    ora7445
+
+For more details on the dbperf option, see Doc ID 2160658.1.
+
+    diagcollect -srdc ora700
+
+This will begin and interactive session in that will prompt you for information. The prompts will vary by the type of srdc event specified.
+
+TFA than begins collecting data and populating the collection.
+
+Example:
+
+    tfactl> diagcollect -srdc ora700 -database cdbrac
+    Enter the time of the ORA-00700 [YYYY-MM-DD HH24:MI:SS,<RETURN>=ALL] : 
+
+    1. Oct/24/2016 14:11:12 : [cdbrac] ORA-00700: soft internal error, arguments: [kskvmstatact: excessive swapping observed], [], [], [], [], [], [], [], [], [], [], []
+    2. Oct/21/2016 17:08:24 : [cdbrac] ORA-00700: soft internal error, arguments: [EVENT_CREATED_INCIDENT], [1918], [SIMULATED_ERROR], [], [], [], [], [], [], [], [], []
+
+    Please choose the event : 1-2 [1] 1
+    Selected value is : 1 ( Oct/24/2016 14:11:12 )
+    Scripts to be run by this srdc: ipspack rdahcve1210 rdahcve1120 rdahcve1110 
+    Components included in this srdc: OS DATABASE NOCHMOS
+    Collecting data for local node(s)
+    Scanning files from Oct/24/2016 08:11:12 to Oct/24/2016 20:11:12
+    WARNING: End time entered is after the current system time.
+
+    Collection Id : 20161024141948rac1
+
+    Repository Location in rac1 : /u01/app/oracle/tfa/repository
+
+    Collection monitor will wait up to 60 seconds for collections to start 
+    2016/10/24 14:19:56 MDT : Collection Name : tfa_srdc_ora700_Mon_Oct_24_14_19_48_MDT_2016.zip
+    2016/10/24 14:19:56 MDT : Scanning of files for Collection in progress...
+    2016/10/24 14:19:56 MDT : Collecting extra files...
+    2016/10/24 14:20:01 MDT : Getting list of files satisfying time range [10/24/2016 08:11:12 MDT, 10/24/2016 14:19:56 MDT]
+    2016/10/24 14:20:01 MDT : Starting Thread to identify stored files to collect
+    2016/10/24 14:20:01 MDT : Getting List of Files to Collect 
+    2016/10/24 14:20:13 MDT : Finished Getting List of Files to Collect
+    2016/10/24 14:20:17 MDT : Trimming file : rac1/rdbms/cdbrac/cdbrac1/trace/alert_cdbrac1.log with original file size : 4.9MB
+    2016/10/24 14:20:17 MDT : Trimming file : rac1/rdbms/cdbrac/cdbrac1/trace/alert_cdbrac1.log.20161023 with original file size : 4.9MB
+    2016/10/24 14:20:18 MDT : Collecting ADR incident files...
+    2016/10/24 14:20:18 MDT : Waiting for collection of extra files
+    2016/10/24 14:21:22 MDT : Completed collection of extra files...
+    2016/10/24 14:21:23 MDT : Completed Zipping of all files
+    2016/10/24 14:21:23 MDT : Cleaning up temporary files
+    2016/10/24 14:21:23 MDT : Finished Cleaning up temporary files
+    2016/10/24 14:21:23 MDT : Finalizing the Collection Zip File
+    2016/10/24 14:21:23 MDT : Finished Finalizing the Collection Zip File
+    2016/10/24 14:21:23 MDT : Total Number of Files checked : 19551
+    2016/10/24 14:21:23 MDT : Total Size of all Files Checked : 1.3GB
+    2016/10/24 14:21:23 MDT : Number of files containing required range : 87
+    2016/10/24 14:21:23 MDT : Total Size of Files containing required range : 52MB
+    2016/10/24 14:21:23 MDT : Number of files trimmed : 2
+    2016/10/24 14:21:23 MDT : Total Size of data prior to zip : 44MB
+    2016/10/24 14:21:23 MDT : Saved 9.8MB by trimming files
+    2016/10/24 14:21:23 MDT : Zip file size : 8.1MB
+    2016/10/24 14:21:23 MDT : Total time taken : 87s
+    2016/10/24 14:21:23 MDT : Completed collection of zip files.
+
+    Logs are being collected to: /u01/app/oracle/tfa/repository/srdc_ora700_collection_Mon_Oct_24_14_19_48_MDT_2016_node_local
+    /u01/app/oracle/tfa/repository/srdc_ora700_collection_Mon_Oct_24_14_19_48_MDT_2016_node_local/rac1.tfa_srdc_ora700_Mon_Oct_24_14_19_48_MDT_2016.zip

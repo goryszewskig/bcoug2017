@@ -1,0 +1,157 @@
+analyze: Log and module analyzer tool
+
+Limit searches by:
+    String pattern
+    Component
+    Message type
+    Node
+    Time (since time, for time, from/to)
+
+Write output to screen or output to a file.
+
+Options:
+  -search "pattern"  Search for pattern in DB and CRS alert logs in past <n> [h]ours or [d]ays. 
+                 Default value of <n> is 1h
+  -comp Components to analyze. Default is all.
+  -type Analyze messages of specified type. Default is error.
+  -node Specify comma separated list of host names. Default is all 
+
+Time Options: Specify one of 3 options, -since or -for or -from,-to
+  -since Analyze for specified duration before current time
+  -for Analyze for specified time
+  -from,-to Analyze for specified time period
+  -verbose Show verbose output.
+  -o Write the output to <file> instead of printing on screen.
+
+Oratop Options: Below options are available when using -comp oratop
+                 -database <dbname> <oratop options> <logon>
+  <logon> : defalut will be / as sysdba. Specify a different user using
+            {username[/password][@connect_identifier] | / }
+            [AS {SYSDBA|SYSOPER}]
+            connect_identifier: host[:port]/[service_name]
+  -database <dbname> Database name to run oratop
+  <oratop options>:
+  -k : FILE#:BLOCK#, section 4 lt is (EVENT/LATCH)
+  -m : MODULE/ACTION, section 4 (default is USERNAME/PROGRAM)
+  -s : SQL mode, section 4 (default is process mode)
+  -c : database service mode (default is connect string)
+  -f : detailed format, 132 columns (default: standard, 80 columns)
+  -b : batch mode (default is text-based user interface)
+  -n : maximum number of iterations (requires number)
+  -i : interval delay, requires value in seconds (default: 5s)
+
+Components:
+    DB
+    ASM
+    CRS
+    ACFS
+    OS
+    OSW (OSW top output)
+    OSWSLABINFO (OSW Slabinfo output)
+
+    analyze -search "ORA-00700" -since 1d
+
+Search patterns are case insensitive by default. To make them case sensitive, use /string/c:
+
+    analyze -search "/Starting/c" -since 1d -node rac2
+
+Note that the results of an analyze search are verbose and shown in context with the full log entry, compared to running a simple grep against the file:
+
+    tfactl> analyze -search "/Starting/c" -since 1d -node rac2  
+
+    INFO: analyzing all (Alert and Unix System Logs) logs for the last 1440 minutes...  Please wait...
+    INFO: analyzing host: rac2
+
+                        Report title: Analysis of Alert,System Logs
+                   Report date range: last ~1 day(s)
+          Report (default) time zone: MST - Mountain Standard Time
+                 Analysis started at: 25-Oct-2016 01:28:50 AM MDT
+               Elapsed analysis time: 3 second(s).
+                  Configuration file: /u01/app/12.1.0/grid/tfa/rac2/tfa_home/ext/tnt/conf/tnt.prop
+                 Configuration group: all
+                           Parameter: /Starting/c
+                 Total message count:          1,737, from 19-Oct-2016 08:35:08 PM MDT to 25-Oct-2016 01:20:38 AM MDT
+    Messages matching last ~1 day(s):          1,064, from 24-Oct-2016 01:38:04 AM MDT to 25-Oct-2016 01:20:38 AM MDT
+                      Matching regex: Starting
+                      Case sensitive: true
+                         Match count: 56
+
+    [Source: /u01/app/oracle/diag/crs/rac2/crs/trace/alert.log, Line: 498]
+    2016-10-24 06:53:03.415
+     [OCSSD(3248)]CRS-1652: Starting clean up of CRSD resources.
+
+    [Source: /var/log/messages, Line: 800]
+    Oct 24 06:54:20 2016
+    rac2 vboxadd-service.sh: Starting VirtualBox Guest Addition service.
+
+    [Source: /u01/app/oracle/diag/asm/+asm/+ASM2/trace/alert_+ASM2.log, Line: 19]
+    Oct 25 01:15:29 2016
+    MEMORY_TARGET defaulting to 1128267776.
+    * instance_number obtained from CSS = 2, checking for the existence of node 0... 
+    * node 0 does not exist. instance_number = 2 
+    Starting ORACLE instance (normal) (OS id: 3831)
+
+Searching for general message types (error) for a specific component (database):
+
+    tfactl> analyze -type error -comp db -since 1d -node rac1
+    INFO: analyzing db (DB Alert Logs) logs for the last 1440 minutes...  Please wait...
+    INFO: analyzing host: rac1
+
+                          Report title: DB Alert Logs
+                     Report date range: last ~1 day(s)
+            Report (default) time zone: MST - Mountain Standard Time
+                   Analysis started at: 25-Oct-2016 01:32:25 AM MDT
+                 Elapsed analysis time: 9 second(s).
+                    Configuration file: /u01/app/12.1.0/grid/tfa/rac1/tfa_home/ext/tnt/conf/tnt.prop
+                   Configuration group: db
+                   Total message count:         43,523, from 19-Oct-2016 08:41:18 PM MDT to 25-Oct-2016 01:22:12 AM MDT
+      Messages matching last ~1 day(s):            709, from 24-Oct-2016 02:00:00 AM MDT to 25-Oct-2016 01:22:12 AM MDT
+            last ~1 day(s) error count:              6, from 24-Oct-2016 08:09:36 AM MDT to 24-Oct-2016 11:06:33 PM MDT
+    last ~1 day(s) ignored error count:              0
+     last ~1 day(s) unique error count:              6
+
+    Message types for last ~1 day(s)
+       Occurrences percent  server name          type
+       ----------- -------  -------------------- -----
+               703   99.2%  rac1                 generic
+                 6    0.8%  rac1                 ERROR
+       ----------- -------
+               709  100.0%
+
+    Unique error messages for last ~1 day(s)
+       Occurrences percent  server name          error
+       ----------- -------  -------------------- -----
+                 1   16.7%  rac1                 LCK0 (ospid: 1792): terminating the instance due to error 472
+                 1   16.7%  rac1                 USER (ospid: 24963): terminating the instance due to error 15064
+                 1   16.7%  rac1                 WARNING: ASMB has not responded for 14446 seconds
+                                                 NOTE: ASM umbilicus running slower than expected, ASMB diagnostic requested after 14446 seconds
+                                                 NOTE: ASMB process state dumped to trace file /u01/app/oracle/diag/rdbms/_mgmtdb/-MGMTDB/trace/-MGMTDB_gen0_1628.trc
+                                                 ERROR: terminating instance because ASMB is stuck for 14446 seconds
+                                                 GEN0 (ospid: 1628): terminating the instance due to error 15082
+ 
+                 1   16.7%  rac1                 WARNING: ASMB has not responded for 1920 seconds
+                                                 NOTE: ASM umbilicus running slower than expected, ASMB diagnostic requested after 1920 seconds
+                                                 NOTE: ASMB process state dumped to trace file /u01/app/oracle/diag/rdbms/cdbrac/cdbrac1/trace/cdbrac1_gen0_9405.trc
+                                                 ERROR: terminating instance because ASMB is stuck for 1920 seconds
+                                                 GEN0 (ospid: 9405): terminating the instance due to error 15082
+
+                 1   16.7%  rac1                 USER (ospid: 971): terminating the instance due to error 15064
+                 1   16.7%  rac1                 Errors in file /u01/app/oracle/diag/rdbms/_mgmtdb/-MGMTDB/trace/-MGMTDB_asmb_13787.trc:
+                                                 ORA-15064: communication failure with ASM instance
+                                                 ORA-03113: end-of-file on communication channel
+                                                 Process ID: 
+                                                 Session ID: 36 Serial number: 59133
+                                                 USER (ospid: 13787): terminating the instance due to error 15064
+       ----------- -------
+                 6  100.0%
+
+===============================================================================
+Access OSWatcher from analyze:
+
+    analyze -comp osw -since 1d
+    analyze -comp osw -since 1h -node rac1
+
+===============================================================================
+Access oratop from analyze:
+
+    analyze -comp oratop -database cdbrac -since 1d

@@ -1,0 +1,38 @@
+Cross-Registering Instances
+TFA needs to know about the other node(s) in the cluster to be fully functional. Without ssh equivalence for the root user, this means copying the local credentials from one node to the other(s).
+
+Navigate to the new TFA home, $GRID_HOME/tfa/<node>/tfa_home on the master node. There are three files that need to be copied from this directory to the equivalent directories on the other node(s):
+
+    server.jks
+    client.jks
+    internal/ssl.properties
+
+With these files copied to the child node(s), stop TFA (and Procwatcher) on those node(s) as the root user:
+
+    $GRID_HOME/bin/tfactl stop
+
+Confirm that TFA and Procwatcher are no longer running on the child node(s):
+
+    $GRID_HOME/bin/tfactl status
+    
+    .--------------------------------------------------------------------------------------------.
+    | Host | Status of TFA | PID   | Port | Version    | Build ID             | Inventory Status |
+    +------+---------------+-------+------+------------+----------------------+------------------+
+    | rac1 | RUNNING       | 18053 | 5000 | 12.1.2.8.3 | 12128320160930113240 | COMPLETE         |
+    | rac2 | NOT RUNNING   | -     |      |            |                      |                  |
+    '------+---------------+-------+------+------------+----------------------+------------------'
+
+Now, start TFA again. It will pick up the new credentials and be cluster-aware:
+
+    $GRID_HOME/bin/tfactl start
+
+Confirm that TFA is running on all nodes:
+
+    $GRID_HOME/bin/tfactl print status
+
+    .----------------------------------------------------------------------------------------------.
+    | Host   | Status of TFA | PID   | Port | Version    | Build ID             | Inventory Status |
+    +--------+---------------+-------+------+------------+----------------------+------------------+
+    | bba701 | RUNNING       | 12035 | 5000 | 12.1.2.7.0 | 12127020160303214632 | COMPLETE         |
+    | bba700 | RUNNING       | 32997 | 5000 | 12.1.2.7.0 | 12127020160303214632 | COMPLETE         |
+    '--------+---------------+-------+------+------------+----------------------+------------------'
