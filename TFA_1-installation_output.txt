@@ -1,0 +1,113 @@
+root@rac1.localdomain 2016-10-21 14:33:09: -/home/oracle/software/tfa
+> ./installTFALite 
+TFA Installation Log will be written to File : /tmp/tfa_install_16333_2016_10_21-14_33_15.log
+
+Starting TFA installation
+
+TFA HOME : /u01/app/12.1.0/grid/tfa/rac1/tfa_home
+TFA Build Version: 121283 Build Date: 201609301132
+Installed Build Version: 121200 Build Date: 201406190949
+
+TFA is already installed. Patching /u01/app/12.1.0/grid/tfa/rac1/tfa_home...
+TFA patching typical install from zipfile is written to /u01/app/12.1.0/grid/tfa/rac1/tfapatch.log
+
+TFA will be Patched on: 
+rac1
+rac2
+
+Do you want to continue with patching TFA? [Y|N] [Y]: 
+
+Checking for ssh equivalency in rac2
+Node rac2 is not configured for ssh user equivalency
+Key Stores are already updated in rac2
+
+Stopping TFA Support Tools...
+
+Shutting down TFA in rac1...
+
+Shutting down TFA
+oracle-tfa stop/waiting
+. . . . . 
+Killing TFA running with pid 1710
+. . . 
+Successfully shutdown TFA..
+
+Updating TFA Jars...
+
+Starting TFA in rac1...
+
+Starting TFA..
+oracle-tfa start/running, process 16803
+Waiting up to 100 seconds for TFA to be started..
+. . . . . 
+Successfully started TFA Process..
+. . . . . 
+TFA Started and listening for commands
+
+Creating ZIP: /u01/app/12.1.0/grid/tfa/rac1/tfa_home/internal/tfapatch.zip
+
+Applying Patch on rac2:
+
+Auto patching is enabled in rac2. Patching TFA via Secure Sockets to rac2.
+
+TFA_HOME in rac2 : /u01/app/12.1.0/grid/tfa/rac2/tfa_home
+Creating patchScript in local host
+Creating patchScriptWrapper in local host
+
+Sending /u01/app/12.1.0/grid/tfa/rac1/tfa_home/internal/tfapatch.zip to rac2
+Sending /u01/app/12.1.0/grid/tfa/rac1/tfa_home/internal/patchScript.sh to rac2
+Sending /u01/app/12.1.0/grid/tfa/rac1/tfa_home/internal/patchScriptWrap to rac2
+Sending init.tfa to rac2
+Executing patchScriptWrapper in rac2
+Sleeping for 35 seconds while TFA is patched in rac2
+. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
+Waiting up to 120 seconds for TFA to be restarted in rac2
+. . . . . . . . . . 
+Successfully restarted TFA in rac2
+
+Applying Patch on rac1:
+
+Stopping TFA Support Tools...
+
+Shutting down TFA for Patching...
+
+Shutting down TFA
+oracle-tfa stop/waiting
+. . . . . 
+Killing TFA running with pid 16882
+. . . 
+Successfully shutdown TFA..
+
+Current version of Berkeley DB is 5.0.84, so no upgrade required
+
+Copying TFA Certificates...
+Moving config.properties.bkp to config.properties
+
+Running commands to fix init.tfa and tfactl in localhost
+
+Starting TFA in rac1...
+
+Creating Sym Link /etc/rc.d/rc0.d/K17init.tfa to /etc/init.d/init.tfa
+Creating Sym Link /etc/rc.d/rc1.d/K17init.tfa to /etc/init.d/init.tfa
+Creating Sym Link /etc/rc.d/rc2.d/K17init.tfa to /etc/init.d/init.tfa
+Creating Sym Link /etc/rc.d/rc4.d/K17init.tfa to /etc/init.d/init.tfa
+Creating Sym Link /etc/rc.d/rc6.d/K17init.tfa to /etc/init.d/init.tfa
+Starting TFA..
+oracle-tfa start/running, process 17999
+Waiting up to 100 seconds for TFA to be started..
+. . . . . 
+Successfully started TFA Process..
+. . . . . 
+TFA Started and listening for commands
+
+Enabling Access for Non-root Users on rac1...
+
+.------------------------------------------------------------.
+| Host | TFA Version | TFA Build ID         | Upgrade Status |
++------+-------------+----------------------+----------------+
+| rac1 |  12.1.2.8.3 | 12128320160930113240 | UPGRADED       |
+| rac2 |  12.1.2.8.3 | 12128320160930113240 | UPGRADED       |
+'------+-------------+----------------------+----------------'
+
+root@rac1.localdomain 2016-10-21 14:35:19: -/home/oracle/software/tfa
+> 
